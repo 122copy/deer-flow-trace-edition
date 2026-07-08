@@ -212,6 +212,31 @@ export interface Translations {
     failed: string;
   };
 
+  // Execution Flow
+  execution: {
+    title: string;
+    threadTitle: string;
+    steps: string;
+    step: string;
+    waiting: string;
+    running: string;
+    output: string;
+    metadata: string;
+    input: string;
+    selectStep: string;
+    filter: string;
+    all: string;
+    agent: string;
+    tool: string;
+    model: string;
+    node: string;
+    unknown: string;
+    beforeAgent: string;
+    beforeModel: string;
+    afterModel: string;
+    afterAgent: string;
+  };
+
   // Token Usage
   tokenUsage: {
     title: string;

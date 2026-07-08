@@ -4,6 +4,7 @@ import {
   Conversation,
   ConversationContent,
 } from "@/components/ai-elements/conversation";
+import { ExecutionFlow } from "@/components/ai-elements/execution-flow";
 import { useI18n } from "@/core/i18n/hooks";
 import {
   extractContentFromMessage,
@@ -199,6 +200,7 @@ export function MessageList({
           );
         })}
         {thread.isLoading && <StreamingIndicator className="my-4" />}
+        <ExecutionFlow threadId={threadId} isLoading={thread.isLoading} />
         <div style={{ height: `${paddingBottom}px` }} />
       </ConversationContent>
     </Conversation>

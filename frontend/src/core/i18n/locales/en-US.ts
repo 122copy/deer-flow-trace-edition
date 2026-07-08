@@ -275,6 +275,31 @@ export const enUS: Translations = {
     failed: "Subtask failed",
   },
 
+  // Execution Flow
+  execution: {
+    title: "Execution Flow",
+    threadTitle: "Title",
+    steps: "steps",
+    step: "Step",
+    waiting: "Waiting...",
+    running: "Running...",
+    output: "Output",
+    metadata: "Metadata",
+    input: "Input",
+    selectStep: "Select a step to view details",
+    filter: "Filter",
+    all: "All",
+    agent: "Agent",
+    tool: "Tool",
+    model: "Model",
+    node: "Node",
+    unknown: "Unknown",
+    beforeAgent: "Before Agent",
+    beforeModel: "Before Model",
+    afterModel: "After Model",
+    afterAgent: "After Agent",
+  },
+
   // Token Usage
   tokenUsage: {
     title: "Token Usage",

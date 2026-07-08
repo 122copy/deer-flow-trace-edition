@@ -184,6 +184,10 @@ This gateway provides custom endpoints for models, MCP configuration, skills, an
     # Channels API is mounted at /api/channels
     app.include_router(channels.router)
 
+    # Execution history API is mounted at /api/execution
+    from app.gateway.routers import execution
+    app.include_router(execution.router)
+
     @app.get("/health", tags=["health"])
     async def health_check() -> dict:
         """Health check endpoint.

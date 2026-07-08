@@ -262,6 +262,31 @@ export const zhCN: Translations = {
     failed: "子任务失败",
   },
 
+  // Execution Flow
+  execution: {
+    title: "执行流程",
+    threadTitle: "标题",
+    steps: "步",
+    step: "步骤",
+    waiting: "等待中...",
+    running: "运行中...",
+    output: "输出",
+    metadata: "元数据",
+    input: "输入",
+    selectStep: "选择一个步骤查看详情",
+    filter: "筛选",
+    all: "全部",
+    agent: "代理",
+    tool: "工具",
+    model: "模型",
+    node: "节点",
+    unknown: "未知",
+    beforeAgent: "代理前",
+    beforeModel: "模型前",
+    afterModel: "模型后",
+    afterAgent: "代理后",
+  },
+
   // Token Usage
   tokenUsage: {
     title: "Token 用量",
