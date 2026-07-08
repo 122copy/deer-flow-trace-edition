@@ -1,626 +1,396 @@
-# 🦌 DeerFlow - 2.0
+<div align="center">
 
-English | [中文](./README_zh.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [Русский](./README_ru.md)
+# 🦌 DeerFlow+ (deer-flow-plus)
+
+## 🔓 **Built-in Execution Flow Tracing — ZERO LangSmith Required.**
+
+> **不用上 LangSmith，不用花一分钱，你的 Agent 链路在本地就能被看见。**
+
+**DeerFlow+ is a community-maintained fork of bytedance/deer-flow that ships with native execution observability. Every LangGraph checkpoint, every sub-agent call, every tool invocation, every model inference — inspectable right inside the chat UI, with zero external services, zero cloud round-trips, and zero per-trace fees.**
+
+---
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](./backend/pyproject.toml)
 [![Node.js](https://img.shields.io/badge/Node.js-22%2B-339933?logo=node.js&logoColor=white)](./Makefile)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Upstream](https://img.shields.io/badge/upstream-bytedance%2Fdeer--flow-blueviolet)](https://github.com/bytedance/deer-flow)
+[![✅ No LangSmith Required](https://img.shields.io/badge/%E2%9C%85%20No%20LangSmith-Required-success)]()
+[![Self-hosted tracing](https://img.shields.io/badge/tracing-self--hosted-informational)]()
+[![100% Local](https://img.shields.io/badge/runs-100%25%20Locally-9cf)]()
+[![0$ Fee](https://img.shields.io/badge/fees-%240-ff69b4)]()
 
-<a href="https://trendshift.io/repositories/14699" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14699" alt="bytedance%2Fdeer-flow | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-> On February 28th, 2026, DeerFlow claimed the 🏆 #1 spot on GitHub Trending following the launch of version 2. Thanks a million to our incredible community — you made this happen! 💪🔥
+**[ 🚀 Quick Start ](#quick-start) · [ ✨ Why DeerFlow+ ](#core-enhancements-over-official-bytedancedeer-flow) · [ 🔓 Zero LangSmith Deep Dive ](#why-zero-langsmith) · [ 📊 3-way Comparison ](#deerflow-vs-official-deerflow-vs-langsmith-saas) · [ 🔧 Architecture ](#architecture)**
 
-DeerFlow (**D**eep **E**xploration and **E**fficient **R**esearch **Flow**) is an open-source **super agent harness** that orchestrates **sub-agents**, **memory**, and **sandboxes** to do almost anything — powered by **extensible skills**.
+> **Run agents. See every step. Pay nothing.** 🦌 → 🔍 → 💡
+>
+> *(Launch agents → inspect every checkpoint node → iterate faster — all without a single call to langchain.com.)*
 
-https://github.com/user-attachments/assets/a8bcadc4-e040-4cf2-8fda-dd768b999c18
-
-> [!NOTE]
-> **DeerFlow 2.0 is a ground-up rewrite.** It shares no code with v1. If you're looking for the original Deep Research framework, it's maintained on the [`1.x` branch](https://github.com/bytedance/deer-flow/tree/main-1.x) — contributions there are still welcome. Active development has moved to 2.0.
-
-## Official Website
-
-[<img width="2880" height="1600" alt="image" src="https://github.com/user-attachments/assets/a598c49f-3b2f-41ea-a052-05e21349188a" />](https://deerflow.tech)
-
-Learn more and see **real demos** on our [**official website**](https://deerflow.tech).
-
-## Coding Plan from ByteDance Volcengine
-
-<img width="4808" height="2400" alt="英文方舟" src="https://github.com/user-attachments/assets/2ecc7b9d-50be-4185-b1f7-5542d222fb2d" />
-
-- We strongly recommend using Doubao-Seed-2.0-Code, DeepSeek v3.2 and Kimi 2.5 to run DeerFlow
-- [Learn more](https://www.byteplus.com/en/activity/codingplan?utm_campaign=deer_flow&utm_content=deer_flow&utm_medium=devrel&utm_source=OWO&utm_term=deer_flow)
-- [中国大陆地区的开发者请点击这里](https://www.volcengine.com/activity/codingplan?utm_campaign=deer_flow&utm_content=deer_flow&utm_medium=devrel&utm_source=OWO&utm_term=deer_flow)
-
-## InfoQuest
-
-DeerFlow has newly integrated the intelligent search and crawling toolset independently developed by BytePlus--[InfoQuest (supports free online experience)](https://docs.byteplus.com/en/docs/InfoQuest/What_is_Info_Quest)
-
-<a href="https://docs.byteplus.com/en/docs/InfoQuest/What_is_Info_Quest" target="_blank">
-  <img
-    src="https://sf16-sg.tiktokcdn.com/obj/eden-sg/hubseh7bsbps/20251208-160108.png"   alt="InfoQuest_banner"
-  />
-</a>
+</div>
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-- [🦌 DeerFlow - 2.0](#-deerflow---20)
-  - [Official Website](#official-website)
-  - [InfoQuest](#infoquest)
-  - [Table of Contents](#table-of-contents)
-  - [One-Line Agent Setup](#one-line-agent-setup)
-  - [Quick Start](#quick-start)
-    - [Configuration](#configuration)
-    - [Running the Application](#running-the-application)
-      - [Option 1: Docker (Recommended)](#option-1-docker-recommended)
-      - [Option 2: Local Development](#option-2-local-development)
-    - [Advanced](#advanced)
-      - [Sandbox Mode](#sandbox-mode)
-      - [MCP Server](#mcp-server)
-      - [IM Channels](#im-channels)
-      - [LangSmith Tracing](#langsmith-tracing)
-  - [From Deep Research to Super Agent Harness](#from-deep-research-to-super-agent-harness)
-  - [Core Features](#core-features)
-    - [Skills \& Tools](#skills--tools)
-      - [Claude Code Integration](#claude-code-integration)
-    - [Sub-Agents](#sub-agents)
-    - [Sandbox \& File System](#sandbox--file-system)
-    - [Context Engineering](#context-engineering)
-    - [Long-Term Memory](#long-term-memory)
-  - [Recommended Models](#recommended-models)
-  - [Embedded Python Client](#embedded-python-client)
-  - [Documentation](#documentation)
-  - [⚠️ Security Notice](#️-security-notice)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
-    - [Key Contributors](#key-contributors)
-  - [Star History](#star-history)
+- [🦌 DeerFlow+](#deerflow-deer-flow-plus)
+  - [🔓 Why Zero LangSmith ](#why-zero-langsmith)
+  - [📊 DeerFlow+ vs Official DeerFlow vs LangSmith SaaS](#deerflow-vs-official-deerflow-vs-langsmith-saas)
+  - [✨ Core Enhancements over Official bytedance/deer-flow](#core-enhancements-over-official-bytedancedeer-flow)
+  - [🚀 Quick Start](#quick-start)
+    - [0. One-Line Agent Setup (for Claude Code / Codex / Cursor / Windsurf)](#0-one-line-agent-setup-for-claude-code-codex-cursor-windsurf)
+    - [1. Clone & Config](#1-clone-config)
+    - [2. Configure Models](#2-configure-models)
+    - [3. Run with Docker (Recommended)](#3-run-with-docker-recommended)
+    - [4. Run Locally (Development)](#4-run-locally-development)
+    - [5. Access the App & Use Execution Flow 🔍](#5-access-the-app-use-execution-flow)
+  - [🔧 Architecture](#architecture)
+    - [How the Built-in Execution Flow Works (no LangSmith callbacks required)](#how-the-built-in-execution-flow-works-no-langsmith-callbacks-required)
+  - [🧩 Advanced Config](#advanced-config)
+    - [Sandbox Modes](#sandbox-modes)
+    - [MCP Servers & Skills](#mcp-servers-skills)
+    - [IM Channels (Feishu / Slack / Telegram)](#im-channels-feishu-slack-telegram)
+    - [🔒 LangSmith — optional if you really want it](#langsmith-optional-if-you-really-want-it)
+  - [🎯 Recommended Models](#recommended-models)
+  - [📖 Documentation](#documentation)
+  - [⚠️ Security Notice](#security-notice)
+  - [🤝 Contributing](#contributing)
+    - [Relation to Upstream bytedance/deer-flow](#relation-to-upstream-bytedancedeer-flow)
+  - [📜 License](#license)
+  - [🙏 Acknowledgments](#acknowledgments)
 
-## One-Line Agent Setup
+---
 
-If you use Claude Code, Codex, Cursor, Windsurf, or another coding agent, you can hand it the setup instructions in one sentence:
+## 🔓 🛡️ Why **Zero LangSmith** ?
+
+> **TL;DR** — DeerFlow already uses LangGraph. LangGraph's official way to "see what the agent is doing" is **LangSmith**, a paid SaaS run by LangChain Inc. in the US. DeerFlow+ gives you the same (and in many cases, **better-integrated**) execution trace visibility **100% locally inside the chat UI you already use**, with no accounts, no API keys, no per-trace billing, no data leaving your network.
+
+### 🧮 LangSmith SaaS pricing vs. DeerFlow+ (spoiler: DeerFlow+ wins at every scale)
+
+| What you get                | LangSmith (Free Tier) | LangSmith (Pro) | LangSmith (Team) | **DeerFlow+** |
+|-----------------------------|:---------------------:|:---------------:|:----------------:|:-------------:|
+| Traces / month              | **5,000** only        | 50,000          | 500,000          | **∞ Unlimited** |
+| Price / month               | $0                    | **$39**         | **$299**         | **$0 Forever** |
+| Runs in your browser / UI   | ❌ Opens external `smith.langchain.com` tab | ❌ External tab | ❌ External tab  | ✅ **Embedded right in the DeerFlow chat panel** |
+| Data location               | ☁️ LangChain servers (USA) | ☁️ USA | ☁️ USA | ✅ **Local SQLite on your disk / private network only** |
+| Works air-gapped / offline  | ❌ Impossible         | ❌ Impossible   | ❌ Impossible    | ✅ **Yes, fully works offline** |
+| Works on corporate intranet | ❌ Usually blocked by egress firewalls / DLP | ❌ Still blocked | ❌ Still blocked | ✅ **Yes — no outbound traffic ever** |
+| No LangChain account needed | ❌ Requires sign-up    | ❌ Requires billing | ❌ Requires enterprise contract | ✅ **Zero accounts, zero API keys** |
+| GDPR / China data residency | ❌ US-hosted only     | ❌ US-hosted only | ✉️ Ask for enterprise (extra $$$) | ✅ **You own the data — compliance already solved** |
+
+### 💸 Real-world math
+
+If your DeerFlow+ agent runs 10 conversations/day × 20 steps each = 6,000 traces/month:
+
+- with **LangSmith Free Tier**: ❌ **You're over quota on day 15.** Traces stop being recorded until next month.
+- with **LangSmith Pro**: **$468 / year** just for basic tracing.
+- with **LangSmith Team**: **$3,588 / year.**
+- with **DeerFlow+**: ✅ **$0. Same (or better) visibility. Forever. And the UI is one click away inside chat.**
+
+### 🔒 Privacy & Compliance
+
+Running an agent for internal docs, customer tickets, or code that contains proprietary information?
+
+- ❌ **LangSmith** uploads **every prompt, every tool argument, every model output, every checkpoint state** to third-party servers in the United States. Even with "self-hosted datasets," execution-level spans still transit the LangSmith API by default.
+- ✅ **DeerFlow+** reads execution traces **directly from LangGraph's local SQLite checkpointer** at `backend/.deer-flow/checkpoints.db`. **Nothing leaves your machine.** No API calls, no callbacks, no telemetry. You can even pull the network cable and the trace panel keeps working perfectly.
+
+### 🎚️ Native vs. External UX
+
+With LangSmith you:
+1. Start a chat in DeerFlow
+2. Agent does something wrong / interesting
+3. **Leave DeerFlow** → open a new tab → log in to LangSmith → filter by session → find your run → click 3 layers deep → finally see the spans
+4. Context-switch back to DeerFlow to fix the prompt / rerun
+
+With DeerFlow+ Execution Flow panel:
+1. Start a chat in DeerFlow
+2. Agent does something wrong / interesting
+3. **Scroll down in the same window.** The Execution Flow panel is already there, live-updating with green/red status pills.
+4. Click any step → input / output / metadata pop open inline.
+5. Fix and rerun. **Zero context switch.**
+
+---
+
+## 📊 DeerFlow+ vs Official DeerFlow vs LangSmith SaaS
+
+| Capability | Official bytedance/deer-flow | Official deer-flow **+ LangSmith Paid** | **DeerFlow+ (this repo)** |
+|-----------|:---:|:---:|:---:|
+| LangGraph super-agent harness | ✅ | ✅ | ✅ |
+| Sub-agents, skills, sandboxes, MCP | ✅ | ✅ | ✅ |
+| Multi-model providers | ✅ | ✅ | ✅ |
+| **Chat-level execution trace UI** | ❌ *(no UI; use LangSmith)* | ❌ *(opens LangSmith in a new tab)* | ✅ **Embedded Execution Flow panel** |
+| Per-step: status, node type, filters | ❌ Only via LangSmith UI | ✅ (LangSmith) | ✅ (built-in) |
+| Click a step → checkpoint I/O + metadata | ❌ Only via LangSmith UI | ✅ (LangSmith) | ✅ (built-in) |
+| Works without internet | ✅ for agent runs | ❌ **NO — LangSmith requires egress** | ✅ **Yes — 100% offline** |
+| Cost for 10k traces / month | $0 agent + $?? for DIY solution | **$39 / mo (LangSmith Pro)** | **$0 forever** |
+| Trace data stays on your network | N/A | ❌ Goes to USA | ✅ **Always** |
+| Works inside mainland China | ✅ Agent runs fine | ❌ LangSmith blocked / very slow + data residency risk | ✅ **Zero issues** |
+| Local SQLite checkpointer preserved | ✅ | ✅ | ✅ |
+| vLLM / Ollama local LLM wrapper | ❌ (bring-your-own) | ❌ (bring-your-own) | ✅ `LocalChatModel` built-in |
+| Showcase demo threads UI | ❌ | ❌ | ✅ `/workspace/demo` |
+| Landing page → direct work mode | ❌ (marketing page first) | ❌ same | ✅ direct redirect |
+| Skill scripts hardening (no hardcoded keys) | ❌ public skills may contain placeholders | ❌ same | ✅ API-key env-var only |
+| MIT-licensed, fork-friendly | ✅ | ✅ *(LangSmith is separate & proprietary)* | ✅ Fully MIT |
+
+---
+
+## ✨ Core Enhancements over Official bytedance/deer-flow
+
+| # | Feature | What it does |
+|---|---------|--------------|
+| **1** ⭐⭐⭐ | **🔓 Execution Flow panel · No LangSmith required** | **Built-in, 100% local trace UI for every LangGraph step.** Replaces the need for LangSmith SaaS entirely. Real-time, chat-embedded panel showing node phases (before/after agent & model), tool calls, middleware — all with status colors, filters, and click-to-expand checkpoint details. Zero external services, zero fees, zero data leaving your network. Works fully offline. |
+| **2** | **🤖 Local LLM provider (vLLM / Ollama ready)** | Ships with `LocalChatModel` so you can run DeerFlow+ against **any OpenAI-compatible local inference endpoint**. Auto-normalizes multi-modal payloads and strips unsupported `thinking` params for gateways that don't speak them. |
+| **3** | **🎬 Demo threads showcase** | `/workspace/demo` — browse pre-baked conversation demos. Perfect for onboarding teammates, internal reviews, and conference talks without firing up real LLM calls. |
+| **4** | **🎨 Full-stack UI/UX polish** | Direct-to-workspace landing (no marketing page by default), responsive container widths so Execution Flow renders correctly on laptops and narrow monitors, safe clipboard guard for non-HTTPS deployments, Demo entry in sidebar. |
+| **5** | **🐳 Docker production readiness** | Checkpointer SQLite database persists across container restarts via bind mount. Nginx config pre-wires the `/api/execution` route. `DEER_FLOW_ROOT` is auto-injected by the launch scripts. |
+| **6** | **🔒 Skill-script security hardening** | Public image-generation / video-generation skills no longer ship with a hardcoded inline API key fallback. Keys must be provided via the `AGNES_API_KEY` env var — eliminating the risk of accidental credential leakage when redistributing forks. |
+
+---
+
+## 🚀 Quick Start
+
+> **DeerFlow+ is a drop-in fork.** Every setup command from the official [bytedance/deer-flow](https://github.com/bytedance/deer-flow) Quick Start works identically below. If you already know how to run DeerFlow, you already know how to run DeerFlow+ — and you get the Execution Flow panel **for free, immediately, no extra config**.
+
+### 0. One-Line Agent Setup (for Claude Code / Codex / Cursor / Windsurf)
 
 ```text
-Help me clone DeerFlow if needed, then bootstrap it for local development by following https://raw.githubusercontent.com/bytedance/deer-flow/main/Install.md
+Help me clone deer-flow-plus if needed, then bootstrap it for local development by following the Quick Start section of https://raw.githubusercontent.com/<your-gh-handle>/deer-flow-plus/main/README.md
 ```
 
-That prompt is intended for coding agents. It tells the agent to clone the repo if needed, choose Docker when available, and stop with the exact next command plus any missing config the user still needs to provide.
-
-## Quick Start
-
-### Configuration
-
-1. **Clone the DeerFlow repository**
-
-   ```bash
-   git clone https://github.com/bytedance/deer-flow.git
-   cd deer-flow
-   ```
-
-2. **Generate local configuration files**
-
-   From the project root directory (`deer-flow/`), run:
-
-   ```bash
-   make config
-   ```
-
-   This command creates local configuration files based on the provided example templates.
-
-3. **Configure your preferred model(s)**
-
-   Edit `config.yaml` and define at least one model:
-
-   ```yaml
-   models:
-     - name: gpt-4                       # Internal identifier
-       display_name: GPT-4               # Human-readable name
-       use: langchain_openai:ChatOpenAI  # LangChain class path
-       model: gpt-4                      # Model identifier for API
-       api_key: $OPENAI_API_KEY          # API key (recommended: use env var)
-       max_tokens: 4096                  # Maximum tokens per request
-       temperature: 0.7                  # Sampling temperature
-
-     - name: openrouter-gemini-2.5-flash
-       display_name: Gemini 2.5 Flash (OpenRouter)
-       use: langchain_openai:ChatOpenAI
-       model: google/gemini-2.5-flash-preview
-       api_key: $OPENAI_API_KEY          # OpenRouter still uses the OpenAI-compatible field name here
-       base_url: https://openrouter.ai/api/v1
-
-     - name: gpt-5-responses
-       display_name: GPT-5 (Responses API)
-       use: langchain_openai:ChatOpenAI
-       model: gpt-5
-       api_key: $OPENAI_API_KEY
-       use_responses_api: true
-       output_version: responses/v1
-   ```
-
-   OpenRouter and similar OpenAI-compatible gateways should be configured with `langchain_openai:ChatOpenAI` plus `base_url`. If you prefer a provider-specific environment variable name, point `api_key` at that variable explicitly (for example `api_key: $OPENROUTER_API_KEY`).
-
-   To route OpenAI models through `/v1/responses`, keep using `langchain_openai:ChatOpenAI` and set `use_responses_api: true` with `output_version: responses/v1`.
-
-   CLI-backed provider examples:
-
-   ```yaml
-   models:
-     - name: gpt-5.4
-       display_name: GPT-5.4 (Codex CLI)
-       use: deerflow.models.openai_codex_provider:CodexChatModel
-       model: gpt-5.4
-       supports_thinking: true
-       supports_reasoning_effort: true
-
-     - name: claude-sonnet-4.6
-       display_name: Claude Sonnet 4.6 (Claude Code OAuth)
-       use: deerflow.models.claude_provider:ClaudeChatModel
-       model: claude-sonnet-4-6
-       max_tokens: 4096
-       supports_thinking: true
-   ```
-
-   - Codex CLI reads `~/.codex/auth.json`
-   - The Codex Responses endpoint currently rejects `max_tokens` and `max_output_tokens`, so `CodexChatModel` does not expose a request-level token cap
-   - Claude Code accepts `CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`, `CLAUDE_CODE_CREDENTIALS_PATH`, or plaintext `~/.claude/.credentials.json`
-   - ACP agent entries are separate from model providers. If you configure `acp_agents.codex`, point it at a Codex ACP adapter such as `npx -y @zed-industries/codex-acp`; the standard `codex` CLI binary is not ACP-compatible by itself
-   - On macOS, DeerFlow does not probe Keychain automatically. Export Claude Code auth explicitly if needed:
-
-   ```bash
-   eval "$(python3 scripts/export_claude_code_oauth.py --print-export)"
-   ```
-   
-4. **Set API keys for your configured model(s)**
-
-   Choose one of the following methods:
-
-- Option A: Edit the `.env` file in the project root (Recommended)
-
-
-   ```bash
-   TAVILY_API_KEY=your-tavily-api-key
-   OPENAI_API_KEY=your-openai-api-key
-   # OpenRouter also uses OPENAI_API_KEY when your config uses langchain_openai:ChatOpenAI + base_url.
-   # Add other provider keys as needed
-   INFOQUEST_API_KEY=your-infoquest-api-key
-   ```
-
-- Option B: Export environment variables in your shell
-
-   ```bash
-   export OPENAI_API_KEY=your-openai-api-key
-   ```
-
-   For CLI-backed providers:
-   - Codex CLI: `~/.codex/auth.json`
-   - Claude Code OAuth: explicit env/file handoff or `~/.claude/.credentials.json`
-
-- Option C: Edit `config.yaml` directly (Not recommended for production)
-
-   ```yaml
-   models:
-     - name: gpt-4
-       api_key: your-actual-api-key-here  # Replace placeholder
-   ```
-
-### Running the Application
-
-#### Option 1: Docker (Recommended)
-
-**Development** (hot-reload, source mounts):
+### 1. Clone & Config
 
 ```bash
-make docker-init    # Pull sandbox image (only once or when image updates)
-make docker-start   # Start services (auto-detects sandbox mode from config.yaml)
+# Clone this fork
+git clone https://github.com/<your-gh-handle>/deer-flow-plus.git
+cd deer-flow-plus
+
+# Generate local config files (creates .env.example → .env, config.yaml.example → config.yaml)
+make config
 ```
 
-`make docker-start` starts `provisioner` only when `config.yaml` uses provisioner mode (`sandbox.use: deerflow.community.aio_sandbox:AioSandboxProvider` with `provisioner_url`).
+### 2. Configure Models
 
-Backend processes automatically pick up `config.yaml` changes on the next config access, so model metadata updates do not require a manual restart during development.
+Edit `config.yaml` and define at least one model:
 
-> [!TIP]
-> On Linux, if Docker-based commands fail with `permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock`, add your user to the `docker` group and re-login before retrying. See [CONTRIBUTING.md](CONTRIBUTING.md#linux-docker-daemon-permission-denied) for the full fix.
+```yaml
+models:
+  # Option A — Cloud (OpenAI-compatible)
+  - name: gpt-4o-mini
+    display_name: GPT-4o Mini
+    use: langchain_openai:ChatOpenAI
+    model: gpt-4o-mini
+    api_key: $OPENAI_API_KEY
+    max_tokens: 4096
+    temperature: 0.7
 
-**Production** (builds images locally, mounts runtime config and data):
+  # Option B — vLLM / Ollama / any OpenAI-compatible local endpoint
+  - name: local-qwen2.5
+    display_name: Qwen2.5-7B (Local vLLM)
+    use: deerflow.models.local_provider:LocalChatModel   # DeerFlow+ addition
+    base_url: http://localhost:8000/v1
+    model: qwen2.5-7b-instruct
+    max_tokens: 8192
+```
+
+Then set your API keys. Edit `.env` in project root (recommended):
+
+```dotenv
+TAVILY_API_KEY=your-tavily-key              # Optional but recommended for web search
+OPENAI_API_KEY=your-openai-key
+INFOQUEST_API_KEY=your-infoquest-key        # Optional (BytePlus search)
+# AGNES_API_KEY=...                         # Only needed if you use the image/video skills
+```
+
+### 3. Run with Docker (Recommended)
 
 ```bash
-make up     # Build images and start all production services
-make down   # Stop and remove containers
+make docker-init    # Pull sandbox image (once, or when image updates)
+make docker-start   # Start all services (auto-detects sandbox mode from config.yaml)
 ```
 
-> [!NOTE]
-> The LangGraph agent server currently runs via `langgraph dev` (the open-source CLI server).
+Production:
 
-Access: http://localhost:2026
+```bash
+make up     # Build images locally + start all production services
+make down   # Stop & remove containers
+```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed Docker development guide.
+### 4. Run Locally (Development)
 
-#### Option 2: Local Development
+```bash
+make check       # Prerequisites: Node 22+, pnpm, uv, nginx
+make install     # Backend + frontend deps
+make setup-sandbox   # Optional: pre-pull sandbox Docker image
+make dev         # Start everything (backend gateway, langgraph server, frontend dev server, nginx)
+```
 
-If you prefer running services locally:
+### 5. Access the App & Use Execution Flow 🔍
 
-Prerequisite: complete the "Configuration" steps above first (`make config` and model API keys). `make dev` requires a valid configuration file (defaults to `config.yaml` in the project root; can be overridden via `DEER_FLOW_CONFIG_PATH`).
+Open **http://localhost:2026** in your browser.
 
-1. **Check prerequisites**:
-   ```bash
-   make check  # Verifies Node.js 22+, pnpm, uv, nginx
-   ```
+1. Pick a workspace and start a conversation.
+2. Send any message that triggers the agent (e.g. "Search the web for the latest DeerFlow news and summarize.").
+3. **Scroll to the bottom of the conversation.** You'll see the new **Execution Flow** panel live-updating with green/red pills, step names, node types, and timestamps.
+4. Click **any row** to expand the full checkpoint I/O, metadata, phase (before/after agent / model / tool / middleware), and raw checkpoint state — all without leaving the chat. **No LangSmith sign-up, no browser tab switch, no API key, no fees.** ✅
 
-2. **Install dependencies**:
-   ```bash
-   make install  # Install backend + frontend dependencies
-   ```
+---
 
-3. **(Optional) Pre-pull sandbox image**:
-   ```bash
-   # Recommended if using Docker/Container-based sandbox
-   make setup-sandbox
-   ```
+## 🔧 Architecture
 
-4. **(Optional) Load sample memory data for local review**:
-   ```bash
-   python scripts/load_memory_sample.py
-   ```
-   This copies the sample fixture into the default local runtime memory file so reviewers can immediately test `Settings > Memory`.
-   See [backend/docs/MEMORY_SETTINGS_REVIEW.md](backend/docs/MEMORY_SETTINGS_REVIEW.md) for the shortest review flow.
+DeerFlow+ retains the upstream **3-layer separation** and adds one new, **purely additive** HTTP gateway router + one frontend panel:
 
-5. **Start services**:
-   ```bash
-   make dev
-   ```
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                         Browser (frontend)                           │
+│  ┌──────────────────────┐   ┌──────────────────────────────────────┐ │
+│  │ Conversation messages│   │  🆕 Execution Flow panel (chat-end)  │ │
+│  └──────────┬───────────┘   └──────────────────┬───────────────────┘ │
+└─────────────┼──────────────────────────────────┼─────────────────────┘
+              │ REST / WS                        │ REST GET
+              ▼                                  ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                        Nginx Gateway (:2026)                         │
+└─────────────┬──────────────────────────────────┬─────────────────────┘
+              ▼                                  ▼
+┌─────────────────────────────┐   ┌──────────────────────────────────┐ │
+│  Gateway REST/WS (:8001)    │   │  🆕 execution/* router (NEW)     │ │
+│  (messages/auth/workspaces) │   │  ├── /history/{thread_id}        │ │
+└─────────────┬───────────────┘   │  └── /detail/{thread_id}/{ckpt}  │ │
+              │                   └──────────────┬───────────────────┘ │
+              ▼                                  ▼                     │
+┌──────────────────────────────────────────────────────────────────────┤
+│          LangGraph Harness Server (:2024) + SQLite Checkpointer      │
+│   lead_agent → sub_agents → tools → model nodes → memory → sandbox  │
+│   backend/.deer-flow/checkpoints.db  ←  DeerFlow+ reads DIRECTLY    │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-6. **Access**: http://localhost:2026
+### How the Built-in Execution Flow Works (no LangSmith callbacks required)
 
-### Advanced
-#### Sandbox Mode
+DeerFlow+ **does not rely on LangChain's tracing callbacks at all**, so it can't accidentally send spans anywhere. The Execution Flow feature is based entirely on **reading LangGraph's own local SQLite checkpointer** (`backend/.deer-flow/checkpoints.db`):
 
-DeerFlow supports multiple sandbox execution modes:
-- **Local Execution** (runs sandbox code directly on the host machine)
-- **Docker Execution** (runs sandbox code in isolated Docker containers)
-- **Docker Execution with Kubernetes** (runs sandbox code in Kubernetes pods via provisioner service)
+1. **LangGraph writes checkpoints.** Every node (agent / model / tool / middleware) runs through the standard LangGraph state machine. With the default SQLiteSaver checkpointer, each step writes a tuple into the on-disk SQLite database — exactly the same mechanism LangGraph uses for resume-on-crash and state persistence.
+2. **DeerFlow+ adds a tiny read-only gateway router.** `backend/app/gateway/routers/execution.py` exposes two `GET` endpoints:
+   - `GET /api/execution/history/{thread_id}?limit=1000` — groups checkpoints by `step_id` + annotates `node_type` (agent / model / tool / middleware / skill / harness) + `status` (success / error).
+   - `GET /api/execution/detail/{thread_id}/{checkpoint_id}` — returns the full checkpoint `config`, `metadata`, `channel_values`, and raw `writes` so the UI can render exact node inputs and outputs.
+3. **The frontend ExecutionFlow React component polls once on mount + on message settle**, renders status pills, filter chips (All / Agent / Model / Tool / Error), and a clickable detail drawer per step — all inside the existing conversation view.
 
-For Docker development, service startup follows `config.yaml` sandbox mode. In Local/Docker modes, `provisioner` is not started.
+This architecture has three massive advantages over a callback-based tracer (like LangSmith):
 
-See the [Sandbox Configuration Guide](backend/docs/CONFIGURATION.md#sandbox) to configure your preferred mode.
+| Property | Callback tracing (LangSmith) | DeerFlow+ checkpointer-reading |
+|---------|---|---|
+| Spans are lost if tracing errors | ❌ Yes (callback exception drops the span) | ✅ **No.** Checkpoint was already written to SQLite by LangGraph regardless. |
+| Works for historical sessions | ❌ Only if callbacks were enabled at trace time | ✅ **Yes.** Reconstruct any old thread from existing checkpoints. |
+| Network dependency | ⚠️ Yes (every span POSTs outbound) | ✅ **None.** Pure local DB read. |
 
-#### MCP Server
+---
 
-DeerFlow supports configurable MCP servers and skills to extend its capabilities.
-For HTTP/SSE MCP servers, OAuth token flows are supported (`client_credentials`, `refresh_token`).
-See the [MCP Server Guide](backend/docs/MCP_SERVER.md) for detailed instructions.
+## 🧩 Advanced Config
 
-#### IM Channels
+### Sandbox Modes
 
-DeerFlow supports receiving tasks from messaging apps. Channels auto-start when configured — no public IP required for any of them.
+DeerFlow+ supports all upstream sandbox execution modes:
+- **Local** — runs sandbox code directly on the host
+- **Docker** — runs in isolated Docker containers
+- **Docker + Kubernetes** — provisions sandboxes via the optional `provisioner` service (enabled when `config.yaml` sets `sandbox.use: deerflow.community.aio_sandbox:AioSandboxProvider` with a `provisioner_url`)
+
+See the upstream [Sandbox Configuration Guide](backend/docs/CONFIGURATION.md#sandbox).
+
+### MCP Servers & Skills
+
+DeerFlow+ supports configurable MCP Servers and extensible skills (including HTTP/SSE MCP with OAuth: `client_credentials` & `refresh_token` flows). See the upstream [MCP Server Guide](backend/docs/MCP_SERVER.md).
+
+### IM Channels (Feishu / Slack / Telegram)
+
+Receive tasks from IM — none of them need a public IP.
 
 | Channel | Transport | Difficulty |
 |---------|-----------|------------|
 | Telegram | Bot API (long-polling) | Easy |
-| Slack | Socket Mode | Moderate |
-| Feishu / Lark | WebSocket | Moderate |
+| Slack | Socket Mode | Medium |
+| Feishu / Lark | WebSocket | Medium |
 
-**Configuration in `config.yaml`:**
+Minimal `config.yaml` snippet:
 
 ```yaml
 channels:
-  # LangGraph Server URL (default: http://localhost:2024)
   langgraph_url: http://localhost:2024
-  # Gateway API URL (default: http://localhost:8001)
-  gateway_url: http://localhost:8001
-
-  # Optional: global session defaults for all mobile channels
-  session:
-    assistant_id: lead_agent  # or a custom agent name; custom agents are routed via lead_agent + agent_name
-    config:
-      recursion_limit: 100
-    context:
-      thinking_enabled: true
-      is_plan_mode: false
-      subagent_enabled: false
-
-  feishu:
-    enabled: true
-    app_id: $FEISHU_APP_ID
-    app_secret: $FEISHU_APP_SECRET
-
-  slack:
-    enabled: true
-    bot_token: $SLACK_BOT_TOKEN     # xoxb-...
-    app_token: $SLACK_APP_TOKEN     # xapp-... (Socket Mode)
-    allowed_users: []               # empty = allow all
-
-  telegram:
-    enabled: true
-    bot_token: $TELEGRAM_BOT_TOKEN
-    allowed_users: []               # empty = allow all
-
-    # Optional: per-channel / per-user session settings
-    session:
-      assistant_id: mobile-agent  # custom agent names are also supported here
-      context:
-        thinking_enabled: false
-      users:
-        "123456789":
-          assistant_id: vip-agent
-          config:
-            recursion_limit: 150
-          context:
-            thinking_enabled: true
-            subagent_enabled: true
+  gateway_url:   http://localhost:8001
+  feishu:  { enabled: true, app_id: $FEISHU_APP_ID,  app_secret: $FEISHU_APP_SECRET  }
+  slack:   { enabled: true, app_token: $SLACK_APP_TOKEN, bot_token: $SLACK_BOT_TOKEN }
+  telegram:{ enabled: true, bot_token: $TG_BOT_TOKEN }
 ```
 
-Notes:
-- `assistant_id: lead_agent` calls the default LangGraph assistant directly.
-- If `assistant_id` is set to a custom agent name, DeerFlow still routes through `lead_agent` and injects that value as `agent_name`, so the custom agent's SOUL/config takes effect for IM channels.
+### 🔒 LangSmith — *optional* if you really want it
 
-Set the corresponding API keys in your `.env` file:
+DeerFlow+ **doesn't need LangSmith**, and the Execution Flow panel is what 99% of users will want to use daily. But if for some reason you *also* want to mirror traces to LangSmith (e.g., for cross-team sharing on public internet), DeerFlow+ fully respects the standard `LANGSMITH_API_KEY` / `LANGCHAIN_TRACING_V2=true` env vars — exactly like upstream. Set them in `.env`:
 
-```bash
-# Telegram
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrSTUvwxYZ
-
-# Slack
-SLACK_BOT_TOKEN=xoxb-...
-SLACK_APP_TOKEN=xapp-...
-
-# Feishu / Lark
-FEISHU_APP_ID=cli_xxxx
-FEISHU_APP_SECRET=your_app_secret
+```dotenv
+# Optional. DeerFlow+ works perfectly without these.
+LANGCHAIN_TRACING_V2=true
+LANGSMITH_API_KEY=lsv2_pt_xxxx
 ```
 
-**Telegram Setup**
+---
 
-1. Chat with [@BotFather](https://t.me/BotFather), send `/newbot`, and copy the HTTP API token.
-2. Set `TELEGRAM_BOT_TOKEN` in `.env` and enable the channel in `config.yaml`.
+## 🎯 Recommended Models
 
-**Slack Setup**
+DeerFlow+ works with any LangChain `ChatModel` and any OpenAI-compatible endpoint via the built-in `LocalChatModel`.
 
-1. Create a Slack App at [api.slack.com/apps](https://api.slack.com/apps) → Create New App → From scratch.
-2. Under **OAuth & Permissions**, add Bot Token Scopes: `app_mentions:read`, `chat:write`, `im:history`, `im:read`, `im:write`, `files:write`.
-3. Enable **Socket Mode** → generate an App-Level Token (`xapp-…`) with `connections:write` scope.
-4. Under **Event Subscriptions**, subscribe to bot events: `app_mention`, `message.im`.
-5. Set `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` in `.env` and enable the channel in `config.yaml`.
+Community favorites that the upstream DeerFlow team also recommends:
+- **Doubao-Seed-2.0-Code** (Volcengine) — great for coding agents
+- **DeepSeek-V3 / Kimi 2.5** — strong reasoning + Chinese
+- **Qwen2.5-72B-Instruct / Llama-3.1-70B** via your own vLLM deployment — 100% private, with DeerFlow+'s `LocalChatModel`
+- **GPT-4o / Claude 3.5 Sonnet / Gemini 2.5 Flash** via OpenRouter — plug-and-play with `base_url`
 
-**Feishu / Lark Setup**
+---
 
-1. Create an app on [Feishu Open Platform](https://open.feishu.cn/) → enable **Bot** capability.
-2. Add permissions: `im:message`, `im:message.p2p_msg:readonly`, `im:resource`.
-3. Under **Events**, subscribe to `im.message.receive_v1` and select **Long Connection** mode.
-4. Copy the App ID and App Secret. Set `FEISHU_APP_ID` and `FEISHU_APP_SECRET` in `.env` and enable the channel in `config.yaml`.
+## 📖 Documentation
 
-When DeerFlow runs in Docker Compose, IM channels execute inside the `gateway` container. In that case, do not point `channels.langgraph_url` or `channels.gateway_url` at `localhost`; use container service names such as `http://langgraph:2024` and `http://gateway:8001`, or set `DEER_FLOW_CHANNELS_LANGGRAPH_URL` and `DEER_FLOW_CHANNELS_GATEWAY_URL`.
+| Resource | Location |
+|----------|----------|
+| This README (DeerFlow+) | `./README.md` |
+| Official DeerFlow documentation (upstream) | [bytedance/deer-flow docs](https://github.com/bytedance/deer-flow) |
+| Config reference | `backend/docs/CONFIGURATION.md` |
+| MCP Server guide | `backend/docs/MCP_SERVER.md` |
+| Contributing guide (applies to both) | `CONTRIBUTING.md` |
+| Official website (demos & news) | [deerflow.tech](https://deerflow.tech) |
 
-**Commands**
-
-Once a channel is connected, you can interact with DeerFlow directly from the chat:
-
-| Command | Description |
-|---------|-------------|
-| `/new` | Start a new conversation |
-| `/status` | Show current thread info |
-| `/models` | List available models |
-| `/memory` | View memory |
-| `/help` | Show help |
-
-> Messages without a command prefix are treated as regular chat — DeerFlow creates a thread and responds conversationally.
-
-#### LangSmith Tracing
-
-DeerFlow has built-in [LangSmith](https://smith.langchain.com) integration for observability. When enabled, all LLM calls, agent runs, and tool executions are traced and visible in the LangSmith dashboard.
-
-Add the following to your `.env` file:
-
-```bash
-LANGSMITH_TRACING=true
-LANGSMITH_ENDPOINT=https://api.smith.langchain.com
-LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxx
-LANGSMITH_PROJECT=xxx
-```
-
-For Docker deployments, tracing is disabled by default. Set `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` in your `.env` to enable it.
-
-## From Deep Research to Super Agent Harness
-
-DeerFlow started as a Deep Research framework — and the community ran with it. Since launch, developers have pushed it far beyond research: building data pipelines, generating slide decks, spinning up dashboards, automating content workflows. Things we never anticipated.
-
-That told us something important: DeerFlow wasn't just a research tool. It was a **harness** — a runtime that gives agents the infrastructure to actually get work done.
-
-So we rebuilt it from scratch.
-
-DeerFlow 2.0 is no longer a framework you wire together. It's a super agent harness — batteries included, fully extensible. Built on LangGraph and LangChain, it ships with everything an agent needs out of the box: a filesystem, memory, skills, sandbox-aware execution, and the ability to plan and spawn sub-agents for complex, multi-step tasks.
-
-Use it as-is. Or tear it apart and make it yours.
-
-## Core Features
-
-### Skills & Tools
-
-Skills are what make DeerFlow do *almost anything*.
-
-A standard Agent Skill is a structured capability module — a Markdown file that defines a workflow, best practices, and references to supporting resources. DeerFlow ships with built-in skills for research, report generation, slide creation, web pages, image and video generation, and more. But the real power is extensibility: add your own skills, replace the built-in ones, or combine them into compound workflows.
-
-Skills are loaded progressively — only when the task needs them, not all at once. This keeps the context window lean and makes DeerFlow work well even with token-sensitive models.
-
-When you install `.skill` archives through the Gateway, DeerFlow accepts standard optional frontmatter metadata such as `version`, `author`, and `compatibility` instead of rejecting otherwise valid external skills.
-
-Tools follow the same philosophy. DeerFlow comes with a core toolset — web search, web fetch, file operations, bash execution — and supports custom tools via MCP servers and Python functions. Swap anything. Add anything.
-
-Gateway-generated follow-up suggestions now normalize both plain-string model output and block/list-style rich content before parsing the JSON array response, so provider-specific content wrappers do not silently drop suggestions.
-
-```
-# Paths inside the sandbox container
-/mnt/skills/public
-├── research/SKILL.md
-├── report-generation/SKILL.md
-├── slide-creation/SKILL.md
-├── web-page/SKILL.md
-└── image-generation/SKILL.md
-
-/mnt/skills/custom
-└── your-custom-skill/SKILL.md      ← yours
-```
-
-#### Claude Code Integration
-
-The `claude-to-deerflow` skill lets you interact with a running DeerFlow instance directly from [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Send research tasks, check status, manage threads — all without leaving the terminal.
-
-**Install the skill**:
-
-```bash
-npx skills add https://github.com/bytedance/deer-flow --skill claude-to-deerflow
-```
-
-Then make sure DeerFlow is running (default at `http://localhost:2026`) and use the `/claude-to-deerflow` command in Claude Code.
-
-**What you can do**:
-- Send messages to DeerFlow and get streaming responses
-- Choose execution modes: flash (fast), standard, pro (planning), ultra (sub-agents)
-- Check DeerFlow health, list models/skills/agents
-- Manage threads and conversation history
-- Upload files for analysis
-
-**Environment variables** (optional, for custom endpoints):
-
-```bash
-DEERFLOW_URL=http://localhost:2026            # Unified proxy base URL
-DEERFLOW_GATEWAY_URL=http://localhost:2026    # Gateway API
-DEERFLOW_LANGGRAPH_URL=http://localhost:2026/api/langgraph  # LangGraph API
-```
-
-See [`skills/public/claude-to-deerflow/SKILL.md`](skills/public/claude-to-deerflow/SKILL.md) for the full API reference.
-
-### Sub-Agents
-
-Complex tasks rarely fit in a single pass. DeerFlow decomposes them.
-
-The lead agent can spawn sub-agents on the fly — each with its own scoped context, tools, and termination conditions. Sub-agents run in parallel when possible, report back structured results, and the lead agent synthesizes everything into a coherent output.
-
-This is how DeerFlow handles tasks that take minutes to hours: a research task might fan out into a dozen sub-agents, each exploring a different angle, then converge into a single report — or a website — or a slide deck with generated visuals. One harness, many hands.
-
-### Sandbox & File System
-
-DeerFlow doesn't just *talk* about doing things. It has its own computer.
-
-Each task gets its own execution environment with a full filesystem view — skills, workspace, uploads, outputs. The agent reads, writes, and edits files. It can view images and, when configured safely, execute shell commands.
-
-With `AioSandboxProvider`, shell execution runs inside isolated containers. With `LocalSandboxProvider`, file tools still map to per-thread directories on the host, but host `bash` is disabled by default because it is not a secure isolation boundary. Re-enable host bash only for fully trusted local workflows.
-
-This is the difference between a chatbot with tool access and an agent with an actual execution environment.
-
-```
-# Paths inside the sandbox container
-/mnt/user-data/
-├── uploads/          ← your files
-├── workspace/        ← agents' working directory
-└── outputs/          ← final deliverables
-```
-
-### Context Engineering
-
-**Isolated Sub-Agent Context**: Each sub-agent runs in its own isolated context. This means that the sub-agent will not be able to see the context of the main agent or other sub-agents. This is important to ensure that the sub-agent is able to focus on the task at hand and not be distracted by the context of the main agent or other sub-agents.
-
-**Summarization**: Within a session, DeerFlow manages context aggressively — summarizing completed sub-tasks, offloading intermediate results to the filesystem, compressing what's no longer immediately relevant. This lets it stay sharp across long, multi-step tasks without blowing the context window.
-
-### Long-Term Memory
-
-Most agents forget everything the moment a conversation ends. DeerFlow remembers.
-
-Across sessions, DeerFlow builds a persistent memory of your profile, preferences, and accumulated knowledge. The more you use it, the better it knows you — your writing style, your technical stack, your recurring workflows. Memory is stored locally and stays under your control.
-
-Memory updates now skip duplicate fact entries at apply time, so repeated preferences and context do not accumulate endlessly across sessions.
-
-## Recommended Models
-
-DeerFlow is model-agnostic — it works with any LLM that implements the OpenAI-compatible API. That said, it performs best with models that support:
-
-- **Long context windows** (100k+ tokens) for deep research and multi-step tasks
-- **Reasoning capabilities** for adaptive planning and complex decomposition
-- **Multimodal inputs** for image understanding and video comprehension
-- **Strong tool-use** for reliable function calling and structured outputs
-
-## Embedded Python Client
-
-DeerFlow can be used as an embedded Python library without running the full HTTP services. The `DeerFlowClient` provides direct in-process access to all agent and Gateway capabilities, returning the same response schemas as the HTTP Gateway API. The HTTP Gateway also exposes `DELETE /api/threads/{thread_id}` to remove DeerFlow-managed local thread data after the LangGraph thread itself has been deleted:
-
-```python
-from deerflow.client import DeerFlowClient
-
-client = DeerFlowClient()
-
-# Chat
-response = client.chat("Analyze this paper for me", thread_id="my-thread")
-
-# Streaming (LangGraph SSE protocol: values, messages-tuple, end)
-for event in client.stream("hello"):
-    if event.type == "messages-tuple" and event.data.get("type") == "ai":
-        print(event.data["content"])
-
-# Configuration & management — returns Gateway-aligned dicts
-models = client.list_models()        # {"models": [...]}
-skills = client.list_skills()        # {"skills": [...]}
-client.update_skill("web-search", enabled=True)
-client.upload_files("thread-1", ["./report.pdf"])  # {"success": True, "files": [...]}
-```
-
-All dict-returning methods are validated against Gateway Pydantic response models in CI (`TestGatewayConformance`), ensuring the embedded client stays in sync with the HTTP API schemas. See `backend/packages/harness/deerflow/client.py` for full API documentation.
-
-## Documentation
-
-- [Contributing Guide](CONTRIBUTING.md) - Development environment setup and workflow
-- [Configuration Guide](backend/docs/CONFIGURATION.md) - Setup and configuration instructions
-- [Architecture Overview](backend/CLAUDE.md) - Technical architecture details
-- [Backend Architecture](backend/README.md) - Backend architecture and API reference
+---
 
 ## ⚠️ Security Notice
 
-### Improper Deployment May Introduce Security Risks
+1. **DeerFlow+ intentionally removes all hardcoded skill-script API keys** (e.g. `image-generation`, `video-generation`). If you use those skills, supply keys via env vars (`AGNES_API_KEY`, etc.) — never commit them.
+2. The Execution Flow router reads checkpoints read-only, but the SQLite file contains **full checkpoint state including tool args and model outputs**. Treat `backend/.deer-flow/checkpoints.db` as sensitive and don't expose the gateway (`:8001`) directly to the internet — always go through the fronting Nginx (`:2026`) in production.
+3. DeerFlow inherits all upstream security boundaries: the code-execution sandbox must be isolated (Docker / Kubernetes modes for production), and you should restrict which skills are enabled in untrusted environments.
 
-DeerFlow has key high-privilege capabilities including **system command execution, resource operations, and business logic invocation**, and is designed by default to be **deployed in a local trusted environment (accessible only via the 127.0.0.1 loopback interface)**. If you deploy the agent in untrusted environments — such as LAN networks, public cloud servers, or other multi-endpoint accessible environments — without strict security measures, it may introduce security risks, including:
+---
 
-- **Unauthorized illegal invocation**: Agent functionality could be discovered by unauthorized third parties or malicious internet scanners, triggering bulk unauthorized requests that execute high-risk operations such as system commands and file read/write, potentially causing serious security consequences.
-- **Compliance and legal risks**: If the agent is illegally invoked to conduct cyberattacks, data theft, or other illegal activities, it may result in legal liability and compliance risks.
+## 🤝 Contributing
 
-### Security Recommendations
+Contributions to DeerFlow+ (the Execution Flow panel and this fork's extras) are very welcome!
 
-**Note: We strongly recommend deploying DeerFlow in a local trusted network environment.** If you need cross-device or cross-network deployment, you must implement strict security measures, such as:
+### Relation to Upstream bytedance/deer-flow
 
-- **IP allowlist**: Use `iptables`, or deploy hardware firewalls / switches with Access Control Lists (ACL), to **configure IP allowlist rules** and deny access from all other IP addresses.
-- **Authentication gateway**: Configure a reverse proxy (e.g., nginx) and **enable strong pre-authentication**, blocking any unauthenticated access.
-- **Network isolation**: Where possible, place the agent and trusted devices in the **same dedicated VLAN**, isolated from other network devices.
-- **Stay updated**: Continue to follow DeerFlow's security feature updates.
+DeerFlow+ is a **source-available community fork** that tracks [bytedance/deer-flow](https://github.com/bytedance/deer-flow) as its upstream. Our changes are intentionally **small, modular, and additive** so they can be rebased cleanly on top of upstream releases:
 
-## Contributing
+```
+upstream main (bytedance/deer-flow)  →  deer-flow-plus/main (this repo: + execution/* router + ExecutionFlow.tsx + i18n + local_provider + demo + polish)
+```
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, workflow, and guidelines.
+The Execution Flow change ships as **one commit on top of a base snapshot** — you can verify this with `git log --oneline` and review the diff as a single patch. This makes it trivial to:
+- forward-port the feature to new upstream tags, or
+- submit the execution trace feature as a clean **PR back to upstream** if the DeerFlow maintainers want to adopt it natively.
 
-Regression coverage includes Docker sandbox mode detection and provisioner kubeconfig-path handling tests in `backend/tests/`.
-Gateway artifact serving now forces active web content types (`text/html`, `application/xhtml+xml`, `image/svg+xml`) to download as attachments instead of inline rendering, reducing XSS risk for generated artifacts.
+---
 
-## License
+## 📜 License
 
-This project is open source and available under the [MIT License](./LICENSE).
+DeerFlow+ is released under the **MIT License** — identical to the upstream bytedance/deer-flow project. See [`LICENSE`](./LICENSE).
 
-## Acknowledgments
+---
 
-DeerFlow is built upon the incredible work of the open-source community. We are deeply grateful to all the projects and contributors whose efforts have made DeerFlow possible. Truly, we stand on the shoulders of giants.
+## 🙏 Acknowledgments
 
-We would like to extend our sincere appreciation to the following projects for their invaluable contributions:
+- 🙌 The entire [bytedance/deer-flow](https://github.com/bytedance/deer-flow) team at ByteDance for building such a powerful, MIT-licensed Super Agent Harness. DeerFlow+ is a tribute to their great work — it simply would not exist without DeerFlow itself.
+- The [LangGraph](https://github.com/langchain-ai/langgraph) team at LangChain for the excellent SQLite checkpointer design that makes the Execution Flow panel possible. DeerFlow+ chooses to read that local data directly rather than paying LangChain SaaS to re-serve it back to us — with zero disrespect intended. 😄
+- **You**, the user reading this far — star this repo if it saved you a LangSmith bill. ⭐
 
-- **[LangChain](https://github.com/langchain-ai/langchain)**: Their exceptional framework powers our LLM interactions and chains, enabling seamless integration and functionality.
-- **[LangGraph](https://github.com/langchain-ai/langgraph)**: Their innovative approach to multi-agent orchestration has been instrumental in enabling DeerFlow's sophisticated workflows.
-
-These projects exemplify the transformative power of open-source collaboration, and we are proud to build upon their foundations.
-
-### Key Contributors
-
-A heartfelt thank you goes out to the core authors of `DeerFlow`, whose vision, passion, and dedication have brought this project to life:
-
-- **[Daniel Walnut](https://github.com/hetaoBackend/)**
-- **[Henry Li](https://github.com/magiccube/)**
-
-Your unwavering commitment and expertise have been the driving force behind DeerFlow's success. We are honored to have you at the helm of this journey.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=bytedance/deer-flow&type=Date)](https://star-history.com/#bytedance/deer-flow&Date)
